@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Loan Officer Commission Statement Generator</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-header__inner">
+        <div>
+          <h1>Loan Officer Commission Statement Generator</h1>
+          <p class="muted">Enter one loan file, review calculations, then generate a PDF statement.</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" id="btn-generate" class="btn btn-primary">Generate Statement (PDF)</button>
+          <button type="button" id="btn-print" class="btn">Print</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <h2>Commission Entry Form</h2>
+
+        <form id="commission-form" novalidate>
+          <div class="grid-2">
+            <div class="section">
+              <h3>Loan Officer Information</h3>
+              <div class="field">
+                <label for="loName">Loan Officer Name <span class="req">*</span></label>
+                <input id="loName" name="loName" type="text" autocomplete="off" required />
+              </div>
+              <div class="field">
+                <label for="employeeId">Employee ID (optional)</label>
+                <input id="employeeId" name="employeeId" type="text" autocomplete="off" />
+              </div>
+              <div class="field">
+                <label for="teamLeader">Team Leader Name (optional)</label>
+                <input id="teamLeader" name="teamLeader" type="text" autocomplete="off" />
+              </div>
+            </div>
+
+            <div class="section">
+              <h3>Loan / File Information</h3>
+              <div class="field">
+                <label for="borrowerName">Borrower Name</label>
+                <input id="borrowerName" name="borrowerName" type="text" autocomplete="off" />
+              </div>
+              <div class="field">
+                <label for="payDate">Pay Date <span class="req">*</span></label>
+                <input id="payDate" name="payDate" type="date" required />
+              </div>
+              <div class="field">
+                <label for="companyName">Company Name (for PDF header)</label>
+                <input id="companyName" name="companyName" type="text" autocomplete="off" placeholder="Company Name" />
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="grid-2">
+            <div class="section">
+              <h3>Revenue</h3>
+              <div class="field">
+                <label for="totalCheck">Total Check Amount Received <span class="req">*</span></label>
+                <input class="money" id="totalCheck" name="totalCheck" type="text" inputmode="decimal" autocomplete="off" required />
+              </div>
+              <div class="field">
+                <label for="commissionableOverride">Commissionable Amount (optional override)</label>
+                <input class="money" id="commissionableOverride" name="commissionableOverride" type="text" inputmode="decimal" autocomplete="off" placeholder="Leave blank to auto-calc" />
+              </div>
+              <div class="field">
+                <label for="splitPct">Split Percentage (optional)</label>
+                <input class="percent" id="splitPct" name="splitPct" type="text" inputmode="decimal" autocomplete="off" placeholder="Examples: 80 or 0.80" />
+              </div>
+            </div>
+
+            <div class="section">
+              <h3>Pass-Through Reimbursements Included in Check</h3>
+              <div class="field">
+                <label for="creditReport">Credit Report Reimbursement</label>
+                <input class="money" id="creditReport" name="creditReport" type="text" inputmode="decimal" autocomplete="off" />
+              </div>
+              <div class="field">
+                <label for="appraisal">Appraisal Reimbursement</label>
+                <input class="money" id="appraisal" name="appraisal" type="text" inputmode="decimal" autocomplete="off" />
+              </div>
+
+              <div class="field row-2">
+                <label>Other Reimbursement 1</label>
+                <div class="row-2__inner">
+                  <input id="otherReimb1Desc" name="otherReimb1Desc" type="text" autocomplete="off" placeholder="Description" />
+                  <input class="money" id="otherReimb1Amt" name="otherReimb1Amt" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00" />
+                </div>
+              </div>
+              <div class="field row-2">
+                <label>Other Reimbursement 2</label>
+                <div class="row-2__inner">
+                  <input id="otherReimb2Desc" name="otherReimb2Desc" type="text" autocomplete="off" placeholder="Description" />
+                  <input class="money" id="otherReimb2Amt" name="otherReimb2Amt" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00" />
+                </div>
+              </div>
+              <div class="field row-2">
+                <label>Other Reimbursement 3</label>
+                <div class="row-2__inner">
+                  <input id="otherReimb3Desc" name="otherReimb3Desc" type="text" autocomplete="off" placeholder="Description" />
+                  <input class="money" id="otherReimb3Amt" name="otherReimb3Amt" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="grid-2">
+            <div class="section">
+              <h3>Deductions</h3>
+              <div class="field">
+                <label for="houseFee">House Fee</label>
+                <input class="money" id="houseFee" name="houseFee" type="text" inputmode="decimal" autocomplete="off" />
+              </div>
+              <div class="field">
+                <label for="teamLeadFee">Team Lead Fee</label>
+                <input class="money" id="teamLeadFee" name="teamLeadFee" type="text" inputmode="decimal" autocomplete="off" />
+              </div>
+              <div class="field">
+                <label for="otherDeduction1">Other Deduction 1</label>
+                <input class="money" id="otherDeduction1" name="otherDeduction1" type="text" inputmode="decimal" autocomplete="off" />
+              </div>
+              <div class="field">
+                <label for="otherDeduction2">Other Deduction 2</label>
+                <input class="money" id="otherDeduction2" name="otherDeduction2" type="text" inputmode="decimal" autocomplete="off" />
+              </div>
+            </div>
+
+            <div class="section">
+              <h3>Additions</h3>
+              <div class="field">
+                <label for="reimbToLO">Reimbursements to Loan Officer</label>
+                <input class="money" id="reimbToLO" name="reimbToLO" type="text" inputmode="decimal" autocomplete="off" />
+              </div>
+              <div class="field">
+                <label for="additionalAdjustments">Additional Adjustments</label>
+                <input class="money" id="additionalAdjustments" name="additionalAdjustments" type="text" inputmode="decimal" autocomplete="off" />
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="section">
+            <h3>Calculated Outputs (Auto)</h3>
+
+            <div class="outputs">
+              <div class="output">
+                <div class="output__label">Commissionable Amount</div>
+                <div class="output__value" id="out-commissionable">$0.00</div>
+              </div>
+              <div class="output">
+                <div class="output__label">LO Commission Before Deductions</div>
+                <div class="output__value" id="out-before-deductions">$0.00</div>
+              </div>
+              <div class="output">
+                <div class="output__label">Total Deductions</div>
+                <div class="output__value" id="out-total-deductions">$0.00</div>
+              </div>
+              <div class="output">
+                <div class="output__label">Total Additions</div>
+                <div class="output__value" id="out-total-additions">$0.00</div>
+              </div>
+              <div class="output output--net" id="net-wrap">
+                <div class="output__label">Net Commission Payable</div>
+                <div class="output__value" id="out-net">$0.00</div>
+              </div>
+            </div>
+
+            <div class="alerts" aria-live="polite">
+              <div id="alert-required" class="alert alert-hidden">Required fields missing: Loan Officer Name, Total Check Amount, Pay Date.</div>
+              <div id="alert-negative" class="alert alert-hidden">Warning: Net commission is negative.</div>
+            </div>
+          </div>
+
+          <div class="footer-actions">
+            <button type="button" id="btn-reset" class="btn">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card card--light">
+        <h2>Payroll Instructions (MVP)</h2>
+        <ol class="instructions">
+          <li>Enter the required fields (Loan Officer Name, Total Check Amount, Pay Date).</li>
+          <li>Enter reimbursements included in the check (these reduce commissionable amount).</li>
+          <li>Optionally enter a split percentage (e.g. 80 for 80%).</li>
+          <li>Enter deductions and additions as needed.</li>
+          <li>Review the calculated outputs.</li>
+          <li>Click <strong>Generate Statement (PDF)</strong> to download a statement.</li>
+        </ol>
+        <p class="muted">Tip: You can also click Print to print the entry page (not the PDF).</p>
+      </section>
+    </main>
+  </body>
+</html>
