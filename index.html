@@ -35,8 +35,8 @@
                 <input id="loName" name="loName" type="text" autocomplete="off" required />
               </div>
               <div class="field">
-                <label for="employeeId">Employee ID (optional)</label>
-                <input id="employeeId" name="employeeId" type="text" autocomplete="off" />
+                <label for="organization">Organization (Corp/LLC) (optional)</label>
+                <input id="organization" name="organization" type="text" autocomplete="off" />
               </div>
               <div class="field">
                 <label for="teamLeader">Team Leader Name (optional)</label>
@@ -56,7 +56,10 @@
               </div>
               <div class="field">
                 <label for="companyName">Company Name (for PDF header)</label>
-                <input id="companyName" name="companyName" type="text" autocomplete="off" placeholder="Company Name" />
+                <select id="companyName" name="companyName">
+                  <option value="Silver Star Mtg. Corp">Silver Star Mtg. Corp</option>
+                  <option value="RPM Adventures LLC">RPM Adventures LLC</option>
+                </select>
               </div>
             </div>
           </div>

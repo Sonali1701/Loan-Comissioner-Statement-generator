@@ -72,7 +72,17 @@ input{
   color:var(--text);
   outline:none;
 }
+select{
+  width:100%;
+  padding:10px 10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:rgba(0,0,0,.25);
+  color:var(--text);
+  outline:none;
+}
 input:focus{border-color:rgba(110,168,255,.7);box-shadow:0 0 0 3px rgba(110,168,255,.18)}
+select:focus{border-color:rgba(110,168,255,.7);box-shadow:0 0 0 3px rgba(110,168,255,.18)}
 
 .req{color:var(--accent)}
 

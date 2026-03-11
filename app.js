@@ -64,7 +64,7 @@
   const getState = () => {
     const state = {
       loName: el('loName').value.trim(),
-      employeeId: el('employeeId').value.trim(),
+      organization: el('organization').value.trim(),
       teamLeader: el('teamLeader').value.trim(),
       borrowerName: el('borrowerName').value.trim(),
       payDate: el('payDate').value,
@@ -200,7 +200,7 @@
 
     const textChangeIds = [
       'loName',
-      'employeeId',
+      'organization',
       'teamLeader',
       'borrowerName',
       'payDate',
@@ -291,6 +291,10 @@
 
     drawKeyValue(doc, xLabel, xValue, y, 'Loan Officer Name', s.loName);
     y += 20;
+    if (s.organization) {
+      drawKeyValue(doc, xLabel, xValue, y, 'Organization (Corp/LLC)', s.organization);
+      y += 20;
+    }
     drawKeyValue(doc, xLabel, xValue, y, 'Borrower Name', s.borrowerName);
     y += 20;
 
