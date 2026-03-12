@@ -89,24 +89,26 @@
       otherDeduction1: parseMoney(el('otherDeduction1').value),
       otherDeduction2: parseMoney(el('otherDeduction2').value),
 
+      reimbToLODesc: el('reimbToLODesc').value.trim(),
       reimbToLO: parseMoney(el('reimbToLO').value),
+      additionalAdjustmentsDesc: el('additionalAdjustmentsDesc').value.trim(),
       additionalAdjustments: parseMoney(el('additionalAdjustments').value)
     };
 
     const overrideNum = parseMoney(state.commissionableOverride);
     const overrideProvided = state.commissionableOverride.length > 0;
 
-    const passThroughTotal =
+    const totalReimbursements =
       state.creditReport +
       state.appraisal +
       state.otherReimb1Amt +
       state.otherReimb2Amt +
       state.otherReimb3Amt;
 
-    const commissionableAuto = state.totalCheck - passThroughTotal;
+    const commissionableAuto = state.totalCheck - totalReimbursements;
     const commissionableAmount = overrideProvided ? overrideNum : commissionableAuto;
 
-    const loCommissionBeforeDeductions =
+    const loCommission =
       state.splitPct == null
         ? commissionableAmount
         : commissionableAmount * clampToNumber(state.splitPct);
@@ -120,14 +122,14 @@
     const totalAdditions = state.reimbToLO + state.additionalAdjustments;
 
     const netCommissionPayable =
-      loCommissionBeforeDeductions - totalDeductions + totalAdditions;
+      loCommission - totalDeductions + totalReimbursements + totalAdditions;
 
     return {
       ...state,
-      passThroughTotal,
+      totalReimbursements,
       commissionableAuto,
       commissionableAmount,
-      loCommissionBeforeDeductions,
+      loCommission,
       totalDeductions,
       totalAdditions,
       netCommissionPayable
@@ -143,7 +145,8 @@
     const s = getState();
 
     setText('out-commissionable', formatMoney(s.commissionableAmount));
-    setText('out-before-deductions', formatMoney(s.loCommissionBeforeDeductions));
+    setText('out-total-reimbursements', formatMoney(s.totalReimbursements));
+    setText('out-before-deductions', formatMoney(s.loCommission));
     setText('out-total-deductions', formatMoney(s.totalDeductions));
     setText('out-total-additions', formatMoney(s.totalAdditions));
     setText('out-net', formatMoney(s.netCommissionPayable));
@@ -205,6 +208,8 @@
       'borrowerName',
       'payDate',
       'companyName',
+      'reimbToLODesc',
+      'additionalAdjustmentsDesc',
       'otherReimb1Desc',
       'otherReimb2Desc',
       'otherReimb3Desc'
@@ -324,8 +329,35 @@
       xValue,
       y,
       'LO Commission Before Deductions',
-      formatMoney(s.loCommissionBeforeDeductions)
+      formatMoney(s.loCommission)
     );
+
+    y += 28;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('Pass-Through Reimbursements', left, y);
+
+    y += 8;
+    line(doc, left, y, right, y);
+
+    y += 22;
+    doc.setFont('helvetica', 'normal');
+
+    const other1Label = s.otherReimb1Desc ? s.otherReimb1Desc : 'Other Reimbursement 1';
+    const other2Label = s.otherReimb2Desc ? s.otherReimb2Desc : 'Other Reimbursement 2';
+    const other3Label = s.otherReimb3Desc ? s.otherReimb3Desc : 'Other Reimbursement 3';
+
+    drawKeyValue(doc, xLabel, xValue, y, 'Credit Report Reimbursement', formatMoney(s.creditReport));
+    y += 20;
+    drawKeyValue(doc, xLabel, xValue, y, 'Appraisal Reimbursement', formatMoney(s.appraisal));
+    y += 20;
+    drawKeyValue(doc, xLabel, xValue, y, other1Label, formatMoney(s.otherReimb1Amt));
+    y += 20;
+    drawKeyValue(doc, xLabel, xValue, y, other2Label, formatMoney(s.otherReimb2Amt));
+    y += 20;
+    drawKeyValue(doc, xLabel, xValue, y, other3Label, formatMoney(s.otherReimb3Amt));
+    y += 20;
+    drawKeyValue(doc, xLabel, xValue, y, 'Total Reimbursements', formatMoney(s.totalReimbursements));
 
     y += 28;
     doc.setFont('helvetica', 'bold');
@@ -351,7 +383,7 @@
     y += 28;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
-    doc.text('Additions', left, y);
+    doc.text('Additions / Adjustments', left, y);
 
     y += 8;
     line(doc, left, y, right, y);
@@ -359,9 +391,12 @@
     y += 22;
     doc.setFont('helvetica', 'normal');
 
-    drawKeyValue(doc, xLabel, xValue, y, 'Reimbursements', formatMoney(s.reimbToLO));
+    const reimbToLOLabel = s.reimbToLODesc ? s.reimbToLODesc : 'Reimbursements to Loan Officer';
+    const adjLabel = s.additionalAdjustmentsDesc ? s.additionalAdjustmentsDesc : 'Additional Adjustments';
+
+    drawKeyValue(doc, xLabel, xValue, y, reimbToLOLabel, formatMoney(s.reimbToLO));
     y += 20;
-    drawKeyValue(doc, xLabel, xValue, y, 'Additional Adjustments', formatMoney(s.additionalAdjustments));
+    drawKeyValue(doc, xLabel, xValue, y, adjLabel, formatMoney(s.additionalAdjustments));
     y += 20;
     drawKeyValue(doc, xLabel, xValue, y, 'Total Additions', formatMoney(s.totalAdditions));
 
@@ -387,6 +422,16 @@
     attachMoneyFormatting();
     formatInitialMoney();
     updateOutputs();
+
+    if (window.flatpickr) {
+      window.flatpickr('#payDate', {
+        dateFormat: 'Y-m-d',
+        allowInput: true,
+        clickOpens: true,
+        onChange: updateOutputs,
+        onClose: updateOutputs
+      });
+    }
 
     el('btn-generate').addEventListener('click', generatePdf);
     el('btn-print').addEventListener('click', () => window.print());

@@ -84,6 +84,15 @@ select{
 input:focus{border-color:rgba(110,168,255,.7);box-shadow:0 0 0 3px rgba(110,168,255,.18)}
 select:focus{border-color:rgba(110,168,255,.7);box-shadow:0 0 0 3px rgba(110,168,255,.18)}
 
+input[type="date"]{
+  color-scheme: dark;
+}
+input[type="date"]::-webkit-calendar-picker-indicator{
+  filter: invert(1);
+  opacity: .9;
+  cursor: pointer;
+}
+
 .req{color:var(--accent)}
 
 .row-2__inner{display:grid;grid-template-columns:1fr 160px;gap:10px}

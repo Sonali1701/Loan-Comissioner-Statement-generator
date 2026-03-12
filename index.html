@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Loan Officer Commission Statement Generator</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script defer src="app.js"></script>
   </head>
   <body>
@@ -52,7 +54,7 @@
               </div>
               <div class="field">
                 <label for="payDate">Pay Date <span class="req">*</span></label>
-                <input id="payDate" name="payDate" type="date" required />
+                <input id="payDate" name="payDate" type="text" autocomplete="off" placeholder="YYYY-MM-DD" required />
               </div>
               <div class="field">
                 <label for="companyName">Company Name (for PDF header)</label>
@@ -143,13 +145,19 @@
 
             <div class="section">
               <h3>Additions</h3>
-              <div class="field">
-                <label for="reimbToLO">Reimbursements to Loan Officer</label>
-                <input class="money" id="reimbToLO" name="reimbToLO" type="text" inputmode="decimal" autocomplete="off" />
+              <div class="field row-2">
+                <label>Reimbursements to Loan Officer</label>
+                <div class="row-2__inner">
+                  <input id="reimbToLODesc" name="reimbToLODesc" type="text" autocomplete="off" placeholder="Description" />
+                  <input class="money" id="reimbToLO" name="reimbToLO" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00" />
+                </div>
               </div>
-              <div class="field">
-                <label for="additionalAdjustments">Additional Adjustments</label>
-                <input class="money" id="additionalAdjustments" name="additionalAdjustments" type="text" inputmode="decimal" autocomplete="off" />
+              <div class="field row-2">
+                <label>Additional Adjustments</label>
+                <div class="row-2__inner">
+                  <input id="additionalAdjustmentsDesc" name="additionalAdjustmentsDesc" type="text" autocomplete="off" placeholder="Description" />
+                  <input class="money" id="additionalAdjustments" name="additionalAdjustments" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00" />
+                </div>
               </div>
             </div>
           </div>
@@ -163,6 +171,10 @@
               <div class="output">
                 <div class="output__label">Commissionable Amount</div>
                 <div class="output__value" id="out-commissionable">$0.00</div>
+              </div>
+              <div class="output">
+                <div class="output__label">Total Reimbursements</div>
+                <div class="output__value" id="out-total-reimbursements">$0.00</div>
               </div>
               <div class="output">
                 <div class="output__label">LO Commission Before Deductions</div>
