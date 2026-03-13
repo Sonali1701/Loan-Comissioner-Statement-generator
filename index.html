@@ -59,7 +59,7 @@
               <div class="field">
                 <label for="companyName">Company Name (for PDF header)</label>
                 <select id="companyName" name="companyName">
-                  <option value="Silver Star Mtg. Corp">Silver Star Mtg. Corp</option>
+                  <option value="Silver Star Mtg. Corp">Silver Star Mtg Corp</option>
                   <option value="RPM Adventures LLC">RPM Adventures LLC</option>
                 </select>
               </div>
@@ -133,13 +133,19 @@
                 <label for="teamLeadFee">Team Lead Fee</label>
                 <input class="money" id="teamLeadFee" name="teamLeadFee" type="text" inputmode="decimal" autocomplete="off" />
               </div>
-              <div class="field">
-                <label for="otherDeduction1">Other Deduction 1</label>
-                <input class="money" id="otherDeduction1" name="otherDeduction1" type="text" inputmode="decimal" autocomplete="off" />
+              <div class="field row-2">
+                <label>Other Deduction 1</label>
+                <div class="row-2__inner">
+                  <input id="otherDeduction1Desc" name="otherDeduction1Desc" type="text" autocomplete="off" placeholder="Description" />
+                  <input class="money" id="otherDeduction1" name="otherDeduction1" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00" />
+                </div>
               </div>
-              <div class="field">
-                <label for="otherDeduction2">Other Deduction 2</label>
-                <input class="money" id="otherDeduction2" name="otherDeduction2" type="text" inputmode="decimal" autocomplete="off" />
+              <div class="field row-2">
+                <label>Other Deduction 2</label>
+                <div class="row-2__inner">
+                  <input id="otherDeduction2Desc" name="otherDeduction2Desc" type="text" autocomplete="off" placeholder="Description" />
+                  <input class="money" id="otherDeduction2" name="otherDeduction2" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00" />
+                </div>
               </div>
             </div>
 

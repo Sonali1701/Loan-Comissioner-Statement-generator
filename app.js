@@ -86,7 +86,9 @@
 
       houseFee: parseMoney(el('houseFee').value),
       teamLeadFee: parseMoney(el('teamLeadFee').value),
+      otherDeduction1Desc: el('otherDeduction1Desc').value.trim(),
       otherDeduction1: parseMoney(el('otherDeduction1').value),
+      otherDeduction2Desc: el('otherDeduction2Desc').value.trim(),
       otherDeduction2: parseMoney(el('otherDeduction2').value),
 
       reimbToLODesc: el('reimbToLODesc').value.trim(),
@@ -208,6 +210,8 @@
       'borrowerName',
       'payDate',
       'companyName',
+      'otherDeduction1Desc',
+      'otherDeduction2Desc',
       'reimbToLODesc',
       'additionalAdjustmentsDesc',
       'otherReimb1Desc',
@@ -375,8 +379,11 @@
     drawKeyValue(doc, xLabel, xValue, y, 'Team Lead Fee', formatMoney(s.teamLeadFee));
     y += 20;
 
-    const otherDeductions = s.otherDeduction1 + s.otherDeduction2;
-    drawKeyValue(doc, xLabel, xValue, y, 'Other Deductions', formatMoney(otherDeductions));
+    const otherDed1Label = s.otherDeduction1Desc ? s.otherDeduction1Desc : 'Other Deduction 1';
+    const otherDed2Label = s.otherDeduction2Desc ? s.otherDeduction2Desc : 'Other Deduction 2';
+    drawKeyValue(doc, xLabel, xValue, y, otherDed1Label, formatMoney(s.otherDeduction1));
+    y += 20;
+    drawKeyValue(doc, xLabel, xValue, y, otherDed2Label, formatMoney(s.otherDeduction2));
     y += 20;
     drawKeyValue(doc, xLabel, xValue, y, 'Total Deductions', formatMoney(s.totalDeductions));
 
