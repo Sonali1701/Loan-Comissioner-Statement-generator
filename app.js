@@ -61,6 +61,16 @@
     return `${(n * 100).toFixed(2)}%`;
   };
 
+  const ensureSpace = (doc, currentY, neededHeight, left, right) => {
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const bottomMargin = 54;
+    if (currentY + neededHeight > pageHeight - bottomMargin) {
+      doc.addPage();
+      return 56;
+    }
+    return currentY;
+  };
+
   const getState = () => {
     const state = {
       loName: el('loName').value.trim(),
@@ -152,6 +162,17 @@
     setText('out-total-deductions', formatMoney(s.totalDeductions));
     setText('out-total-additions', formatMoney(s.totalAdditions));
     setText('out-net', formatMoney(s.netCommissionPayable));
+
+    const houseSplitInput = el('houseSplit');
+    if (houseSplitInput) {
+      if (s.splitPct == null) {
+        houseSplitInput.value = '';
+      } else {
+        const remainderPct = 1 - clampToNumber(s.splitPct);
+        const remainderAmt = s.commissionableAmount * remainderPct;
+        houseSplitInput.value = `${formatPercent(remainderPct)}  ${formatMoney(remainderAmt)}`;
+      }
+    }
 
     const requiredMissing =
       !s.loName || !s.payDate || !Number.isFinite(s.totalCheck) || s.totalCheck === 0;
@@ -325,7 +346,15 @@
     y += 20;
     drawKeyValue(doc, xLabel, xValue, y, 'Commissionable Amount', formatMoney(s.commissionableAmount));
     y += 20;
-    drawKeyValue(doc, xLabel, xValue, y, 'Split Percentage', s.splitPct == null ? '' : formatPercent(s.splitPct));
+    const splitText =
+      s.splitPct == null
+        ? ''
+        : (() => {
+            const remainderPct = 1 - clampToNumber(s.splitPct);
+            const remainderAmt = s.commissionableAmount * remainderPct;
+            return `${formatPercent(s.splitPct)}   /   ${formatPercent(remainderPct)} ${formatMoney(remainderAmt)}`;
+          })();
+    drawKeyValue(doc, xLabel, xValue, y, 'Split Percentage', splitText);
     y += 20;
     drawKeyValue(
       doc,
@@ -337,6 +366,7 @@
     );
 
     y += 28;
+    y = ensureSpace(doc, y, 170, left, right);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.text('Pass-Through Reimbursements', left, y);
@@ -364,6 +394,7 @@
     drawKeyValue(doc, xLabel, xValue, y, 'Total Reimbursements', formatMoney(s.totalReimbursements));
 
     y += 28;
+    y = ensureSpace(doc, y, 150, left, right);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.text('Deductions', left, y);
@@ -388,6 +419,7 @@
     drawKeyValue(doc, xLabel, xValue, y, 'Total Deductions', formatMoney(s.totalDeductions));
 
     y += 28;
+    y = ensureSpace(doc, y, 140, left, right);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.text('Additions / Adjustments', left, y);
@@ -408,6 +440,7 @@
     drawKeyValue(doc, xLabel, xValue, y, 'Total Additions', formatMoney(s.totalAdditions));
 
     y += 34;
+    y = ensureSpace(doc, y, 120, left, right);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.text('Net Commission Paid to Loan Officer', left, y);

@@ -93,6 +93,11 @@ input[type="date"]::-webkit-calendar-picker-indicator{
   cursor: pointer;
 }
 
+input[readonly]{
+  opacity: .9;
+  background: rgba(0,0,0,.18);
+}
+
 .req{color:var(--accent)}
 
 .row-2__inner{display:grid;grid-template-columns:1fr 160px;gap:10px}
